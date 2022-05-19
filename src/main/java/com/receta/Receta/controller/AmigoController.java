@@ -6,14 +6,13 @@ package com.receta.Receta.controller;
 
 import com.receta.Receta.dto.*;
 import com.receta.Receta.entity.Amigo;
-import com.receta.Receta.entity.Ingrediente;
-import com.receta.Receta.entity.Paso;
-import com.receta.Receta.entity.Receta;
 import com.receta.Receta.entity.User;
 import com.receta.Receta.service.AmigoService;
 import com.receta.Receta.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +23,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-public class UsuarioController {
+@AllArgsConstructor
+public class AmigoController {
 
-    @Autowired
-    UserService userService;
-    
-    @Autowired
-    AmigoService amigoService;
-    
-    @Autowired
-    private ModelMapper modelMapper;    
+    private final UserService userService;
+    private final AmigoService amigoService;
+    private ModelMapper modelMapper;
 
     @RequestMapping("/usuarios")
     public ResponseEntity<?> ObtenerUsuarios(Integer idUsuario) {

@@ -6,106 +6,52 @@ package com.receta.Receta.entity;
 
 import com.receta.Receta.enums.*;
 import com.sun.istack.NotNull;
+import lombok.*;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Table(name = "user")
 public class User {
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int Id) {
-        this.id = Id;
-    }
-
-    public String getNombre() {
-        return Nombre;
-    }
-
-    public void setNombre(String Nombre) {
-        this.Nombre = Nombre;
-    }
-
-    public String getApellidos() {
-        return Apellidos;
-    }
-
-    public void setApellidos(String Apellidos) {
-        this.Apellidos = Apellidos;
-    }
-
-    public Sexo getSexo() {
-        return Sexo;
-    }
-
-    public void setSexo(Sexo Sexo) {
-        this.Sexo = Sexo;
-    }
-
-    public int getTelefono() {
-        return Telefono;
-    }
-
-    public void setTelefono(int Telefono) {
-        this.Telefono = Telefono;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String Email) {
-        this.email = Email;
-    }
-
-    public String getContrasena() {
-        return Contrasena;
-    }
-
-    public void setContrasena(String Contrasena) {
-        this.Contrasena = Contrasena;
-    }
-    
     @Id
-    //Se le indica que el campo ID es Autonumerico
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="Id")
-    public int id;
+    private int id;
     
     @NotNull
-    public String Nombre;
+    private String Nombre;
     
     @NotNull
-    public String Apellidos;    
-    
-    //columnDefinition -> 'HOMBRE' o 'MUJER'
+    private String Apellidos;
+
     @Column(columnDefinition = "ENUM('HOMBRE', 'MUJER')")
     @Enumerated(EnumType.STRING)
-    public Sexo Sexo;        
+    private Sexo Sexo;
 
     @NotNull
-    public int Telefono;
-    
-    @Column(name="Email")
+    private Integer Telefono;
+
+
+    @Email(message = "Email is not valid")
     @NotNull
-    public String email;    
+    private String email;
     
     @NotNull
-    public String Contrasena;
-    
-    public User(String nombre, String apellidos, Sexo sexo, int telefono, String email, String contrasena){
-        this.Nombre = nombre;
-        this.Apellidos = apellidos;
-        this.Sexo = sexo;
-        this.Telefono = telefono;
-        this.email = email;
-        this.Contrasena = contrasena;
-    }
-    
-    public User(){
-        
-    }
+    private String Contrasena;
+
+    @NotNull
+    private Boolean enabled;
+
+    @NotNull
+    @Column(columnDefinition = "ENUM('ROLE_ADMIN', 'ROLE_USER')")
+    @Enumerated(EnumType.STRING)
+    private Rol role;
+
 }

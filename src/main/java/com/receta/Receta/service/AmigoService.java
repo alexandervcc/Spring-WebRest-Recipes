@@ -11,19 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//Encapsuladas en un Servicio-> anadir la propiedad de ser transaccional
-//@Service -> dentro del contexto Spring como un sevicio
 @Service
-//@transaction -> maneje las oepraciones a la db como transacciones -> ATOM
 @Transactional
 public class AmigoService {
     
-	//@AUTOWIRED: inyeccion de dependecias -> Spring te configura elk objecto y entraga listo para ser usado
-    @Autowired
+	@Autowired
     AmigoRepository amigoRepository;
-    
-    
-    //Funciones a ser utilizadas en el contexto transaccional
+
     public void save(Amigo amigo){
         amigoRepository.save(amigo);
     }

@@ -6,6 +6,8 @@ package com.receta.Receta.entity;
 
 import com.receta.Receta.enums.TipoComida;
 import com.sun.istack.NotNull;
+import lombok.*;
+
 import java.sql.Date;
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -17,68 +19,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@Setter
+@Getter
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "receta")
 public class Receta {
 
-    /**
-     * @return the url
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * @param url the url to set
-     */
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the nombre
-     */
-    public String getNombre() {
-        return nombre;
-    }
-
-    /**
-     * @param nombre the nombre to set
-     */
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    /**
-     * @return the fechaCreacion
-     */
-    public Date getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    /**
-     * @param fechaCreacion the fechaCreacion to set
-     */
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-    
     @Id
-    //Se le indica que el campo ID es Autonumerico
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -94,6 +43,8 @@ public class Receta {
     @Column(columnDefinition = "ENUM('DESAYUNO', 'COMIDA', 'CENA')")
     @Enumerated(EnumType.STRING)    
     private TipoComida tipo;
+
+    private String pathVideo;
     
     public Receta(){        
         this.fechaCreacion = Date.valueOf(LocalDate.now());
@@ -103,19 +54,5 @@ public class Receta {
         this.nombre = nombre;
         this.url = url;
         this.fechaCreacion = Date.valueOf(LocalDate.now());
-    }
-
-    /**
-     * @return the tipo
-     */
-    public TipoComida getTipo() {
-        return tipo;
-    }
-
-    /**
-     * @param tipo the tipo to set
-     */
-    public void setTipo(TipoComida tipo) {
-        this.tipo = tipo;
     }
 }

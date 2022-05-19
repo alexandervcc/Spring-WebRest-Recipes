@@ -8,14 +8,16 @@ import com.receta.Receta.entity.User;
 import com.receta.Receta.repository.UserRepository;
 import java.util.List;
 import javax.transaction.Transactional;
+
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@AllArgsConstructor
 @Service
 @Transactional
 public class UserService {
-    
-    @Autowired
+
     UserRepository userRepository;
     
     public List<User> listUser(){
@@ -23,7 +25,6 @@ public class UserService {
     }
     
     public User obtenerUsuarioByEmail(String email){
-        
         List<User> user = userRepository.findByEmail(email);
         if (user == null || user.size() <= 0){
             return null;
@@ -38,4 +39,9 @@ public class UserService {
     public void save(User user){
         userRepository.save(user);
     }
+
+    public int enableUserByEmail(String email){
+        return userRepository.enableAppUser(email);
+    }
+
 }
