@@ -5,6 +5,8 @@
 package com.receta.Receta.entity;
 
 import com.sun.istack.NotNull;
+import lombok.*;
+
 import java.sql.Date;
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -14,71 +16,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-//anotacion de entidad -> clase que se mapea con las tablas de la db
+
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
-//@table -> darle el nombre de la tabla
 @Table(name = "amigo")
 public class Amigo {
-
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the idUsuarioPrimero
-     */
-    public int getIdUsuarioPrimero() {
-        return idUsuarioPrimero;
-    }
-
-    /**
-     * @param idUsuarioPrimero the idUsuarioPrimero to set
-     */
-    public void setIdUsuarioPrimero(int idUsuarioPrimero) {
-        this.idUsuarioPrimero = idUsuarioPrimero;
-    }
-
-    /**
-     * @return the idUsuarioSegundo
-     */
-    public int getIdUsuarioSegundo() {
-        return idUsuarioSegundo;
-    }
-
-    /**
-     * @param idUsuarioSegundo the idUsuarioSegundo to set
-     */
-    public void setIdUsuarioSegundo(int idUsuarioSegundo) {
-        this.idUsuarioSegundo = idUsuarioSegundo;
-    }
-
-    /**
-     * @return the fechaCreacion
-     */
-    public Date getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    /**
-     * @param fechaCreacion the fechaCreacion to set
-     */
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-
-
-
     //Atributos -> mapean con la base de datos
     
     //@id -> senalar un atributo como la clave primariva

@@ -13,9 +13,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
@@ -24,12 +29,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+@Component
+@NoArgsConstructor
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
 	private final String HEADER = "Authorization";
 	private final String PREFIX = "Bearer ";
-	private final String SECRET = "mySecretKey";
-	
+	private final String SECRET = "superhypersecret";
+
+
 	@Override
 	protected void doFilterInternal(
 			HttpServletRequest request, 
@@ -45,7 +53,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.clearContext();
 				}
 			} else {
-					SecurityContextHolder.clearContext();
+				SecurityContextHolder.clearContext();
 			}
 			chain.doFilter(request, response);
 		} catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
@@ -60,19 +68,18 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 		return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(jwtToken).getBody();
 	}
 
-	/**
-	 * Metodo para autenticarnos dentro del flujo de Spring
-	 * 
-	 * @param claims
-	 */
+
 	private void setUpSpringAuthentication(Claims claims) {
 		@SuppressWarnings("unchecked")
 		List<String> authorities = (List) claims.get("authorities");
 
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
-				authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-		SecurityContextHolder.getContext().setAuthentication(auth);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+				claims.getSubject(),
+				null,
+				authorities.stream().map(SimpleGrantedAuthority::new
+			).collect(Collectors.toList()));
 
+		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 
 	private boolean existeJWTToken(HttpServletRequest request, HttpServletResponse res) {

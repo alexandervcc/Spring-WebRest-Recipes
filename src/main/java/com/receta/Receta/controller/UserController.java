@@ -7,22 +7,21 @@ package com.receta.Receta.controller;
 import com.receta.Receta.dto.*;
 import com.receta.Receta.entity.User;
 import com.receta.Receta.entity.ValidationToken;
-import com.receta.Receta.repository.ITokenRepository;
 import com.receta.Receta.service.TokenService;
 import com.receta.Receta.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 import com.receta.Receta.service.email.IEmailSender;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.web.bind.annotation.*;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.util.Date;
-import java.util.UUID;
+
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -33,10 +32,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @AllArgsConstructor
 public class UserController {
 
+    private final String secretKey = "superhypersecret";
     private final UserService userService;
     private final TokenService tokenService;
     private final IEmailSender emailSender;
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
@@ -85,7 +84,8 @@ public class UserController {
         user.setEmail(userDto.Email);
         user.setToken(token);
         user.setId(userBBDD.getId());
-        
+        user.setRol(userBBDD.getRole());
+
         respuesta = new Respuesta("ok", "", user);
 
         return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
@@ -172,9 +172,8 @@ public class UserController {
     }
 
     private String getJWTToken(String username) {
-        String secretKey = "mySecretKey";
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-                .commaSeparatedStringToAuthorityList("ROLE_USER");//ADMINISTRADOR y AUDITORIA
+                .commaSeparatedStringToAuthorityList("ROLE_USER");
 
         String token = Jwts
                 .builder()
@@ -186,9 +185,11 @@ public class UserController {
                                 .collect(Collectors.toList()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))//emision
                 .setExpiration(new Date(System.currentTimeMillis() + 600000))
-                .signWith(SignatureAlgorithm.HS512, //hasheo
+                .signWith(SignatureAlgorithm.HS512,
                         secretKey.getBytes()).compact();
 
         return "Bearer " + token;
     }
+
+
 }

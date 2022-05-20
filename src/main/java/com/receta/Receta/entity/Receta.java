@@ -10,14 +10,8 @@ import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.Set;
+import javax.persistence.*;
 
 @Setter
 @Getter
@@ -29,7 +23,7 @@ public class Receta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotNull
     private String nombre;
@@ -45,6 +39,9 @@ public class Receta {
     private TipoComida tipo;
 
     private String pathVideo;
+
+    @ManyToMany(mappedBy = "listaRecetas")
+    private Set<User> users;
     
     public Receta(){        
         this.fechaCreacion = Date.valueOf(LocalDate.now());

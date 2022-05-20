@@ -5,6 +5,9 @@
 package com.receta.Receta.entity;
 
 import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Date;
 import java.time.LocalDate;
 import javax.persistence.Entity;
@@ -13,80 +16,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "ingrediente")
 public class Ingrediente {
 
-    /**
-     * @return the idReceta
-     */
-    public int getIdReceta() {
-        return idReceta;
-    }
-
-    /**
-     * @param idReceta the idReceta to set
-     */
-    public void setIdReceta(int idReceta) {
-        this.idReceta = idReceta;
-    }
-
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the nombre
-     */
-    public String getNombre() {
-        return nombre;
-    }
-
-    /**
-     * @param nombre the nombre to set
-     */
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    /**
-     * @return the cantidad
-     */
-    public String getCantidad() {
-        return cantidad;
-    }
-
-    /**
-     * @param cantidad the cantidad to set
-     */
-    public void setCantidad(String cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    /**
-     * @return the fechaCreacion
-     */
-    public Date getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    /**
-     * @param fechaCreacion the fechaCreacion to set
-     */
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-    
     @Id
     //Se le indica que el campo ID es Autonumerico
     @GeneratedValue(strategy = GenerationType.IDENTITY)

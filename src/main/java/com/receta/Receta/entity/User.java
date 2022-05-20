@@ -10,6 +10,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.Set;
 
 
 @Entity
@@ -39,7 +40,7 @@ public class User {
     private Integer Telefono;
 
 
-    @Email(message = "Email is not valid")
+    @Email(message = "Formato de email invalido")
     @NotNull
     private String email;
     
@@ -53,5 +54,13 @@ public class User {
     @Column(columnDefinition = "ENUM('ROLE_ADMIN', 'ROLE_USER')")
     @Enumerated(EnumType.STRING)
     private Rol role;
+
+    @ManyToMany
+    @JoinTable(
+        name = "map_user_recetas",
+        joinColumns = @JoinColumn(name="fk_id_user"),
+        inverseJoinColumns = @JoinColumn(name = "fk_id_receta")
+    )
+    private Set<Receta> listaRecetas;
 
 }

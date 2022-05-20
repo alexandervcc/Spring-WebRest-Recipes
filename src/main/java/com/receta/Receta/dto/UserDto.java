@@ -4,6 +4,7 @@
  */
 package com.receta.Receta.dto;
 
+import com.receta.Receta.enums.Rol;
 import com.receta.Receta.enums.Sexo;
 import lombok.*;
 
@@ -14,13 +15,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
+    private Integer id;
+    public Integer Telefono;
     public String Nombre;
     public String Apellidos;
     public Sexo Sexo;
-    public int Telefono;
+    public Rol Rol;
     public String Email;
     public String Contrasena;
     public String SegundaContrasena;
     private String token;
-    private int id;
 }

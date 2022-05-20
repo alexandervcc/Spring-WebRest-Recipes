@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class RecetaController {
 
-    RecetaService recetaService;
-    IngredienteService ingredienteService;
-    PasoService pasoService;
-    private ModelMapper modelMapper;
+    private final RecetaService recetaService;
+    private final IngredienteService ingredienteService;
+    private final PasoService pasoService;
+    private final ModelMapper modelMapper;
 
     @PostMapping("/crearReceta")
     public ResponseEntity<?> CrearReceta(@RequestBody RecetaDTO recetaDTO) {
@@ -40,17 +40,23 @@ public class RecetaController {
                     .map(ingrediente -> modelMapper.map(ingrediente, Ingrediente.class))
                     .collect(Collectors.toList());
 
-            //Almacenar la lista de Ingedientes en la base de datos, con el ID de la receta
-            ingredienteService.saveAll(ingredientes, receta.getId());
-
             List<Paso> pasos = recetaDTO.getPasos().stream()
-                    .map(paso -> modelMapper.map(paso, Paso.class))
-                    .collect(Collectors.toList());
+                .map(paso -> modelMapper.map(paso, Paso.class))
+                .collect(Collectors.toList());
 
+            if(ingredientes.size()==0 && pasos.size()!=0){
+                respuesta = new Respuesta(
+                    "error",
+                    "No se puede crear pasos para la receta si los ingredientes no existen", 
+                    null
+                );
+                return new ResponseEntity<Respuesta>(respuesta, HttpStatus.BAD_REQUEST);
+            }
+            
+            ingredienteService.saveAll(ingredientes, receta.getId());
             pasoService.saveAll(pasos, receta.getId());
 
             respuesta = new Respuesta("ok", "", null);
-
             return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
         } catch (Exception oex) {
         	respuesta = new Respuesta("error", "Se ha producido un error al crear la receta", null);
@@ -58,7 +64,7 @@ public class RecetaController {
         }
     }
 
-    @RequestMapping("/recetas")
+    @GetMapping("/recetas")
     public ResponseEntity<?> Recetas() {
 
         List<Receta> recetas = recetaService.obtenerTodasRecetas();
@@ -72,17 +78,13 @@ public class RecetaController {
         return new ResponseEntity(respuesta, HttpStatus.OK);
     }
 
-    @RequestMapping("/buscarReceta")
+    @GetMapping("/buscarReceta")
     public ResponseEntity<?> BuscarReceta(String palabra) {
 
         List<Receta> recetasEncontradas = recetaService.obtenerRecetaByPalabra(palabra);
-
         List<Ingrediente> ingredientesEncontrados = ingredienteService.obtenerIngredientesByPalabra(palabra);
-
         List<Integer> idsReceta = ingredientesEncontrados.stream().map(Ingrediente::getIdReceta).collect(Collectors.toList());;
-
         List<Receta> recetasEncontradasByIngrediente = recetaService.obtenerRecetasByIds(idsReceta);
-
         recetasEncontradas.addAll(recetasEncontradasByIngrediente);
 
         List<Receta> totalRecetasEncontradas = recetasEncontradas.stream()
@@ -90,11 +92,10 @@ public class RecetaController {
                 .collect(Collectors.toList());
 
         Respuesta respuesta = new Respuesta("ok", "", totalRecetasEncontradas);
-
         return new ResponseEntity(respuesta, HttpStatus.OK);
     }
 
-    @RequestMapping("/receta")
+    @GetMapping("/receta")
     public ResponseEntity<?> ObtenerReceta(Integer id) {
         Receta receta = recetaService.obtenerRecetaById(id);
         Respuesta respuesta = new Respuesta("ok", "", receta);
@@ -102,19 +103,17 @@ public class RecetaController {
         return new ResponseEntity(respuesta, HttpStatus.OK);
     }
 
-    @RequestMapping("/ingredientes")
+    @GetMapping("/ingredientes")
     public ResponseEntity<?> ObtenerIngredientesByReceta(Integer idReceta) {
         List<Ingrediente> ingredientes = ingredienteService.obtenerIngredientesByIdReceta(idReceta);
         Respuesta respuesta = new Respuesta("ok", "", ingredientes);
-
         return new ResponseEntity(respuesta, HttpStatus.OK);
     }
 
-    @RequestMapping("/pasos")
+    @GetMapping("/pasos")
     public ResponseEntity<?> ObtenerPasosByReceta(Integer idReceta) {
         List<Paso> pasos = pasoService.obtenerPasosByIdReceta(idReceta);
         Respuesta respuesta = new Respuesta("ok", "", pasos);
-
         return new ResponseEntity(respuesta, HttpStatus.OK);
     }
 
@@ -122,59 +121,54 @@ public class RecetaController {
     public ResponseEntity<?> actualizarReceta(
         @RequestBody RecetaDTO recetaDTO, @RequestParam("recetaId") String recetaId
     ){
-
         Respuesta respuesta;
-        try {
-            Receta recetaAntigua = recetaService.obtenerRecetaById(Integer.valueOf(recetaId));
+        Receta recetaAntigua = recetaService.obtenerRecetaById(Integer.valueOf(recetaId));
 
-            if(recetaAntigua==null){
-                respuesta = new Respuesta(
-                    "error",
-                    "Receta a actualizar no existe",
-                    null
-                );
-                return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
-            }
-
-            Receta receta = modelMapper.map(recetaDTO, Receta.class);
-            recetaService.save(receta);
-
-            List<Ingrediente> ingredientes = recetaDTO.getIngredientes().stream()
-                .map(ingrediente -> modelMapper.map(ingrediente, Ingrediente.class))
-                .collect(Collectors.toList());
-
-            if(ingredientes.size()==0){
-                respuesta = new Respuesta(
-                    "error",
-                    "Receta sin ingredientes",
-                    null
-                );
-                return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
-            }
-            ingredienteService.saveAll(ingredientes, receta.getId());
-
-            List<Paso> pasos = recetaDTO.getPasos().stream()
-                .map(paso -> modelMapper.map(paso, Paso.class))
-                .collect(Collectors.toList());
-
-            if(pasos.size()==0){
-                respuesta = new Respuesta(
-                    "error",
-                    "Receta sin pasos",
-                    null
-                );
-                return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
-            }
-
-            pasoService.saveAll(pasos, receta.getId());
-
-            respuesta = new Respuesta("ok", "Receta actualizada", null);
-
-            return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
-        } catch (Exception oex) {
-            respuesta = new Respuesta("error", "Se ha producido un error al crear la receta", null);
-            return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
+        if(recetaAntigua==null){
+            respuesta = new Respuesta(
+                "error",
+                "Receta a actualizar no existe",
+                null
+            );
+            return new ResponseEntity(respuesta, HttpStatus.BAD_REQUEST);
         }
+
+        Receta receta = modelMapper.map(recetaDTO, Receta.class);
+        receta.setId(recetaAntigua.getId());
+        recetaService.save(receta);
+
+        List<Ingrediente> ingredientes = recetaDTO.getIngredientes().stream()
+            .map(ingrediente -> modelMapper.map(ingrediente, Ingrediente.class))
+            .collect(Collectors.toList());
+
+        if(ingredientes.size()==0){
+            respuesta = new Respuesta(
+                "error",
+                "Receta sin ingredientes",
+                null
+            );
+            return new ResponseEntity(respuesta, HttpStatus.BAD_REQUEST);
+        }
+
+        ingredienteService.saveAll(ingredientes, receta.getId());
+        List<Paso> pasos = recetaDTO.getPasos().stream()
+            .map(paso -> modelMapper.map(paso, Paso.class))
+            .collect(Collectors.toList());
+
+        if(pasos.size()==0){
+            respuesta = new Respuesta(
+                "error",
+                "Receta sin pasos",
+                null
+            );
+            return new ResponseEntity(respuesta, HttpStatus.BAD_REQUEST);
+        }
+
+        pasoService.saveAll(pasos, receta.getId());
+        respuesta = new Respuesta("ok", "Receta actualizada", null);
+
+        return new ResponseEntity(respuesta, HttpStatus.OK);
+
 
     }
 }

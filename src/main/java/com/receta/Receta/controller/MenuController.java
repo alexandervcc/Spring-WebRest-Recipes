@@ -17,6 +17,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,20 +28,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@AllArgsConstructor
 @RestController
 public class MenuController {
-    
-    @Autowired
-    RecetaService recetaService;
-    
-    @Autowired
-    MenuService menuService;
-    
-    @Autowired
-    MenuDiarioService menuDiarioService;    
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final RecetaService recetaService;
+    private final MenuService menuService;
+    private final MenuDiarioService menuDiarioService;
+    private final ModelMapper modelMapper;
     
     @RequestMapping("/generarMenuSemanal")
     public ResponseEntity<?> GenerarMenuSemanal(){
@@ -94,8 +90,7 @@ public class MenuController {
         respuesta = new Respuesta("ok", "", menuSemal1);
         return new ResponseEntity(respuesta, HttpStatus.OK);
     }
-   
-    
+
     @PostMapping("/guardarMenuSemanal")
     public ResponseEntity<?> GuardarMenuSemanal(@RequestBody MenuSemanalDTO menuSemanalDTO) {
     

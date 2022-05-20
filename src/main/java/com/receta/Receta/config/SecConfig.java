@@ -1,22 +1,30 @@
 package com.receta.Receta.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
+@AllArgsConstructor
 @Configuration
 public class SecConfig  extends WebSecurityConfigurerAdapter {
+
+	private JWTAuthorizationFilter jwtAuthorizationFilter;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
+			.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
 			.httpBasic().disable()
 			.formLogin().disable()
-			.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+			.addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
 			.authorizeRequests()
                         .antMatchers(HttpMethod.GET, "/users").permitAll()
                         .antMatchers(HttpMethod.POST, "/registerUser").permitAll()
